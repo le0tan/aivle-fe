@@ -1,24 +1,15 @@
 import React, {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {logout, selectLoggedIn} from "../../redux/authSlice";
-import {
-  Button,
-  Container,
-  CssBaseline,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Paper,
-  styled,
-  TextField,
-  Typography
-} from "@mui/material";
-import {SignInPaper} from "../signin";
+import {Box, Button, Container, CssBaseline, Paper, Snackbar, styled, TextField, Typography} from "@mui/material";
+import {Alert, SignInPaper} from "../signin";
 import {useForm} from "react-hook-form";
 import axios from "axios";
 import {API_BASE_URL} from "../../constants";
 import Cookie from "js-cookie";
 import {useHistory} from "react-router-dom";
+import ReactJson from 'react-json-view'
+import {useTheme} from "@mui/material/styles";
 
 const Form = styled('form')(({theme}) => ({
     width: '100%', // Fix IE 11 issue.
@@ -31,8 +22,11 @@ const ApiTest = () => {
   const {register, handleSubmit} = useForm();
   const [text, setText] = useState("");
   const [open, setOpen] = useState(false);
+  const [errorText, setErrorText] = useState("");
   const dispatch = useDispatch();
   const history = useHistory();
+  const theme = useTheme();
+
   const onSubmit = data => {
     axios({
       method: "get",
@@ -43,7 +37,9 @@ const ApiTest = () => {
     }).then(resp => {
       setText(JSON.stringify(resp.data));
     }).catch(e => {
-      console.log(e);
+      setErrorText(e.message);
+      setText("");
+      setOpen(true);
     });
   }
   if (!isLoggedIn) {
@@ -59,7 +55,7 @@ const ApiTest = () => {
         <CssBaseline/>
         <SignInPaper>
           <Paper elevation={3} style={{padding: "10px"}}>
-            <Typography>
+            <Typography variant={"button"}>
               API Testing Tool
             </Typography>
             <Form noValidate onSubmit={handleSubmit(onSubmit)}>
@@ -70,23 +66,21 @@ const ApiTest = () => {
                 Submit
               </Button>
             </Form>
-            <TextField id="outlined-read-only-input" value={text} InputProps={{readOnly: true,}}
-                       fullWidth
-                       multiline margin={"normal"}
-            />
+            <Box sx={{margin: 1, marginTop: 3}}>
+              <ReactJson src={text === "" ? {} : JSON.parse(text)}
+                         theme={theme.palette.mode === "light" ? "rjv-default" : "solarized"}
+                         collapsed={2}/>
+            </Box>
           </Paper>
         </SignInPaper>
-        <Button onClick={() => setOpen(true)}>Open Dialog</Button>
       </Container>
-      <Dialog open={open} onClose={() => setOpen(false)} fullWidth>
-        <DialogTitle>Subscribe</DialogTitle>
-        <DialogContent>
-          <Form>
-            <TextField label={"haha"} fullWidth variant="standard"/>
-            <Button variant="contained" sx={{margin: 2}}>Submit</Button>
-          </Form>
-        </DialogContent>
-      </Dialog>
+      <Snackbar open={open} autoHideDuration={6000} onClose={() => setOpen(false)}>
+        <Alert onClose={() => setOpen(false)}
+               severity={"error"}
+               sx={{width: '100%'}}>
+          {errorText}
+        </Alert>
+      </Snackbar>
     </React.Fragment>
   )
 

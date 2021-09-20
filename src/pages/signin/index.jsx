@@ -22,7 +22,7 @@ const LoginIcon = styled(Avatar)(({theme}) => ({
   backgroundColor: theme.palette.secondary.main,
 }));
 
-const Alert = React.forwardRef(function Alert(
+export const Alert = React.forwardRef(function Alert(
   props,
   ref,
 ) {
