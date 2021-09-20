@@ -16,6 +16,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Input,
   styled,
   Table,
   TableBody,
@@ -25,7 +26,7 @@ import {
   Typography
 } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-// import {useForm} from "react-hook-form";
+import {useForm} from "react-hook-form";
 
 class Task {
   id;
@@ -79,8 +80,34 @@ const CourseDetail = () => {
   const [openTaskDetail, setOpenTaskDetail] = useState(false);
   const [openTaskSubmit, setOpenTaskSubmit] = useState(false);
   const [activeTaskIndex, setactiveTaskIndex] = useState(0);
-  const [file, setFile] = useState();
-  // const {register, handleSubmit} = useForm();
+  const {register, handleSubmit, reset} = useForm();
+  const onCloseSubmitDialog = () => {
+    setOpenTaskSubmit(false);
+    reset();
+  }
+  const onSubmitForm = (data) => {
+    const bodyForm = new FormData();
+    bodyForm.append("task", data["task"]);
+    bodyForm.append("file", data["file"][0]);
+    bodyForm.append("description", data["description"]);
+    axios(
+      {
+        method: "post",
+        url: API_BASE_URL + "/api/v1/submissions/",
+        data: bodyForm,
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "Authorization": "Token " + sessionStorage.getItem("token"),
+        }
+      }
+    ).then(resp => {
+      console.log(resp.data);
+    }).catch(e => {
+      console.log(e);
+    }).finally(() => {
+      onCloseSubmitDialog();
+    });
+  };
   useEffect(() => {
     if (!isLoggedIn) {
       return;
@@ -93,7 +120,6 @@ const CourseDetail = () => {
       }
     ).then(resp => {
       const tasks = resp.data["results"].map((value) => new Task(value));
-      console.log(tasks);
       setTasks(tasks);
     }).catch(e => {
       console.log(e);
@@ -104,9 +130,7 @@ const CourseDetail = () => {
     Cookie.remove("token");
     dispatch(logout());
     history.push("/signin");
-    return (
-      <></>
-    )
+    return null;
   }
 
   return (
@@ -173,27 +197,18 @@ const CourseDetail = () => {
         openTaskSubmit ? <Dialog open={openTaskSubmit} maxWidth="md" fullWidth>
           <DialogContent>
             <Typography>
-              Submit form here for task index {activeTaskIndex}
+              Submit form here for {tasks[activeTaskIndex]["name"]}
             </Typography>
-            <Form>
-              <Button variant="contained" component={"label"}>
-                Upload File
-                <input type="file" name="file" hidden
-                       onChange={event => {
-                         if (event.target.files !== null) {
-                           setFile(event.target.files[0]);
-                         }
-                       }}/>
-              </Button>
-              <Typography>
-                {file ? file["name"] : "no file selected"}
-              </Typography>
-              <TextField variant="outlined" margin="normal" fullWidth multiline
+            <Form onSubmit={handleSubmit(onSubmitForm)}>
+              <Input {...register("file", {required: true})} type="file" name="file"/>
+              <TextField variant="outlined" margin="normal" fullWidth multiline {...register("description")}
                          id="description" label="Description" autoFocus/>
+              <input {...register("task", {required: true})} type="text" name="task" value={tasks[activeTaskIndex]["id"]} hidden/>
+              <Button type={"submit"}>Submit</Button>
             </Form>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setOpenTaskSubmit(false)}>Close</Button>
+            <Button onClick={onCloseSubmitDialog}>Close</Button>
           </DialogActions>
         </Dialog> : null
       }

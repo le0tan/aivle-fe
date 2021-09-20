@@ -49,7 +49,6 @@ const SigninForm = (props) => {
         headers: {"Content-Type": "multipart/form-data"}
       }
     ).then(resp => {
-      console.log(resp.data)
       sessionStorage.setItem("token", resp.data["key"])
       Cookie.set("loggedIn", "true");
       dispatch(login());
