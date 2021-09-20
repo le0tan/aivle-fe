@@ -21,7 +21,7 @@ function getBreadcrumbName(pathname) {
 const MuiBreadcrumbs = (props) => {
   const pathnames = props.location.pathname.split("/").filter((x) => x);
   return (
-    <Breadcrumbs aria-label="breadcrumb" sx={{marginTop: 2, marginLeft: 3}}>
+    <Breadcrumbs aria-label="breadcrumb" sx={{marginTop: 2, marginLeft: 4, marginBottom: 3}}>
       <Link underline="hover" onClick={() => props.history.push("/")}>Home</Link>
       {
         pathnames.map((pathname, index) => {

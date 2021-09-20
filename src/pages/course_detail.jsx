@@ -7,16 +7,21 @@ import {API_BASE_URL} from "../constants";
 import Cookie from "js-cookie";
 import {
   Accordion,
+  AccordionActions,
   AccordionDetails,
   AccordionSummary,
   Button,
+  CircularProgress,
   Container,
   CssBaseline,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  Divider,
   Input,
+  InputLabel,
+  Stack,
   styled,
   Table,
   TableBody,
@@ -80,6 +85,7 @@ const CourseDetail = () => {
   const [openTaskDetail, setOpenTaskDetail] = useState(false);
   const [openTaskSubmit, setOpenTaskSubmit] = useState(false);
   const [activeTaskIndex, setactiveTaskIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
   const {register, handleSubmit, reset} = useForm();
   const onCloseSubmitDialog = () => {
     setOpenTaskSubmit(false);
@@ -121,6 +127,7 @@ const CourseDetail = () => {
     ).then(resp => {
       const tasks = resp.data["results"].map((value) => new Task(value));
       setTasks(tasks);
+      setLoading(false);
     }).catch(e => {
       console.log(e);
     });
@@ -138,19 +145,23 @@ const CourseDetail = () => {
       <Container component="main" maxWidth="lg">
         <CssBaseline/>
         {
-          tasks.map(((task, index) => {
+          loading ? <CircularProgress/> : tasks.map(((task, index) => {
             return (
               <Accordion key={`task_${index}`}>
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon/>}
                   aria-controls="panel1a-content"
                 >
-                  <Typography sx={{width: '20%', flexShrink: 0}}>
-                    {task.name}
-                  </Typography>
-                  <Typography sx={{color: 'text.secondary'}}>{task.description}</Typography>
+                  <Stack direction={"column"} spacing={1} sx={{width: "auto", display: "block"}}>
+                    <Typography variant={"h5"}>{task.name}</Typography>
+                    <Typography>Deadline: {task.deadlineAt.toLocaleString()}</Typography>
+                  </Stack>
                 </AccordionSummary>
                 <AccordionDetails>
+                  <Typography sx={{color: 'text.secondary'}}>{task.description}</Typography>
+                </AccordionDetails>
+                <Divider/>
+                <AccordionActions>
                   <Button onClick={() => {
                     setactiveTaskIndex(index);
                     setOpenTaskDetail(true);
@@ -160,11 +171,12 @@ const CourseDetail = () => {
                       <Button href={`${API_BASE_URL}/api/v1/tasks/${task.id}/download_template/`}>Download
                         Template</Button> : null
                   }
+                  <div style={{flexGrow: 1}}/>
                   <Button onClick={() => {
                     setactiveTaskIndex(index);
                     setOpenTaskSubmit(true);
                   }}>Submit</Button>
-                </AccordionDetails>
+                </AccordionActions>
               </Accordion>
             )
           }))
@@ -195,15 +207,17 @@ const CourseDetail = () => {
       }
       {
         openTaskSubmit ? <Dialog open={openTaskSubmit} maxWidth="md" fullWidth>
+          <DialogTitle>
+            New submission to: {tasks[activeTaskIndex]["name"]}
+          </DialogTitle>
           <DialogContent>
-            <Typography>
-              Submit form here for {tasks[activeTaskIndex]["name"]}
-            </Typography>
             <Form onSubmit={handleSubmit(onSubmitForm)}>
-              <Input {...register("file", {required: true})} type="file" name="file"/>
+              <InputLabel>Agent File</InputLabel>
+              <Input {...register("file", {required: true})} type="file" name="file" required/>
               <TextField variant="outlined" margin="normal" fullWidth multiline {...register("description")}
-                         id="description" label="Description" autoFocus/>
-              <input {...register("task", {required: true})} type="text" name="task" value={tasks[activeTaskIndex]["id"]} hidden/>
+                         id="description" label="Description (optional)"/>
+              <input {...register("task", {required: true})} type="text" name="task"
+                     value={tasks[activeTaskIndex]["id"]} hidden/>
               <Button type={"submit"}>Submit</Button>
             </Form>
           </DialogContent>
