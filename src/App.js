@@ -1,5 +1,18 @@
-import React from 'react';
-import {AppBar, Button, IconButton, Link, Toolbar, Typography} from "@mui/material";
+import React, {useContext, useState} from 'react';
+import {
+  AppBar,
+  Box,
+  Button,
+  Drawer,
+  IconButton,
+  Link,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Toolbar,
+  Typography
+} from "@mui/material";
 import {createTheme, ThemeProvider, useTheme} from "@mui/material/styles";
 import {useDispatch, useSelector} from "react-redux";
 import {logout, selectLoggedIn} from "./redux/authSlice";
@@ -13,6 +26,7 @@ import CoursePage from "./pages/courses";
 import CourseDetail from "./pages/course_detail";
 import MuiBreadcrumbs from "./components/breadcrumbs";
 import {selectIsDark, setDark, setLight} from "./redux/darkModeSlice";
+import {DeveloperMode, MenuBook} from "@mui/icons-material";
 
 const MyApp = () => {
   const isLoggedIn = useSelector(selectLoggedIn);
@@ -24,24 +38,24 @@ const MyApp = () => {
     history.push("/signin");
   }
   const theme = useTheme();
-  const colorMode = React.useContext(ColorModeContext);
+  const colorMode = useContext(ColorModeContext);
   const onSwitchChange = (event) => {
     colorMode.setColorMode(event.target.checked);
     sessionStorage.setItem("mode", event.target.checked ? "dark" : "light");
   };
+  const [openDrawer, setOpenDrawer] = useState(false);
 
   return (
     <React.Fragment>
       <AppBar position="static">
         <Toolbar>
-          <IconButton edge="start" color="inherit" aria-label="menu" size="large" sx={{marginRight: 2}}>
+          <IconButton edge="start" color="inherit" aria-label="menu" size="large" sx={{marginRight: 2}}
+                      onClick={() => setOpenDrawer(true)}>
             <MenuIcon/>
           </IconButton>
           <Typography variant="h6" sx={{flexGrow: 1, textAlign: "left"}}>
             <Link color="inherit" underline={"none"} component={RouterLink} to="/">aiVLE</Link>
           </Typography>
-          <Button color="inherit" component={RouterLink} to="/courses">Courses</Button>
-          <Button color="inherit" component={RouterLink} to="/api_test">API Test</Button>
           {
             !isLoggedIn
               ? <Button color="inherit" component={RouterLink} to="/signin">Login</Button>
@@ -51,6 +65,24 @@ const MyApp = () => {
         </Toolbar>
       </AppBar>
       <MuiBreadcrumbs/>
+      <Drawer open={openDrawer} onClose={() => setOpenDrawer(false)}>
+        <Box sx={{width: 250}} role="presentation" onClick={() => setOpenDrawer(false)}
+             onKeyDown={() => setOpenDrawer(false)}>
+          <List>
+            <ListItemButton key={"course"} component={RouterLink} to="/courses">
+              <ListItemIcon><MenuBook/></ListItemIcon>
+              <ListItemText primary={"Courses"}/>
+            </ListItemButton>
+            <ListItemButton key={"api_tool"} component={RouterLink} to="/api_test">
+              <ListItemIcon><DeveloperMode/></ListItemIcon>
+              <ListItemText primary={"API Test Tool"}/>
+            </ListItemButton>
+          </List>
+          {/*<Divider/>*/}
+          {/*<List>*/}
+          {/*</List>*/}
+        </Box>
+      </Drawer>
       <Switch>
         <Route path="/signin">
           <SignIn/>
