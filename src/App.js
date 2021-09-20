@@ -27,6 +27,7 @@ import CourseDetail from "./pages/course_detail";
 import MuiBreadcrumbs from "./components/breadcrumbs";
 import {selectIsDark, setDark, setLight} from "./redux/darkModeSlice";
 import {DeveloperMode, MenuBook} from "@mui/icons-material";
+import Home from "./pages/home";
 
 const MyApp = () => {
   const isLoggedIn = useSelector(selectLoggedIn);
@@ -97,11 +98,18 @@ const MyApp = () => {
           <CoursePage/>
         </Route>
         <Route path="/">
-          <Typography>
-            Welcome!
-          </Typography>
+          <Home/>
         </Route>
       </Switch>
+      {/*<footer>*/}
+      {/*    <Container maxWidth="lg">*/}
+      {/*      <Box textAlign="center" pt={{ xs: 5, sm: 10 }} pb={{ xs: 5, sm: 0 }}>*/}
+      {/*        <Typography>*/}
+      {/*          Tan Yuanhong &reg; {new Date().getFullYear()}*/}
+      {/*        </Typography>*/}
+      {/*      </Box>*/}
+      {/*    </Container>*/}
+      {/*</footer>*/}
     </React.Fragment>
   );
 }
