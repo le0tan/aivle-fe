@@ -5,7 +5,7 @@ import {
   AccordionSummary,
   CircularProgress,
   Container,
-  CssBaseline
+  CssBaseline, Stack, Typography
 } from "@mui/material";
 import React, {useEffect, useState} from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -15,12 +15,14 @@ import {useDispatch, useSelector} from "react-redux";
 import axios from "axios";
 import {API_BASE_URL} from "../constants";
 import ReactJson from "react-json-view";
+import {useTheme} from "@mui/material/styles";
 
 const Submissions = () => {
   const {id, task_id} = useParams();
   const dispatch = useDispatch();
   const isLoggedIn = useSelector(selectLoggedIn);
   const history = useHistory();
+  const theme = useTheme();
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -34,6 +36,7 @@ const Submissions = () => {
         params: {
           user: sessionStorage.getItem("user_id"),
           task: task_id,
+          ordering: "-created_at", // latest first
         },
         headers: {
           "Authorization": "Token " + sessionStorage.getItem("token")
@@ -64,10 +67,19 @@ const Submissions = () => {
             submissions.map((submission, index) => {
               return <Accordion key={`submission_${index}`}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
-                  {submission["id"]}
+                  <Stack>
+                    <Typography variant={"h6"}>Attempt
+                      at {new Date(submission["created_at"]).toLocaleString()}</Typography>
+                    {
+                      submission["point"] ? <div>
+                        <Typography variant={"button"}>Score: </Typography>
+                        <Typography variant={"button"}>{submission["point"]}</Typography>
+                      </div> : null
+                    }
+                  </Stack>
                 </AccordionSummary>
                 <AccordionDetails>
-                  <ReactJson src={submission}/>
+                  <ReactJson src={submission} theme={theme.palette.mode === "light" ? "rjv-default" : "solarized"}/>
                 </AccordionDetails>
               </Accordion>
             })
