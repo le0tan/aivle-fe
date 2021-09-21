@@ -1,8 +1,8 @@
 import {Avatar, Container, CssBaseline, Paper, Snackbar, styled, Typography} from "@mui/material";
-import SigninForm from "../../components/signinForm";
+import SigninForm from "../components/signinForm";
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import {useSelector} from "react-redux";
-import {selectLoggedIn} from "../../redux/authSlice";
+import {selectLoggedIn} from "../redux/authSlice";
 import React from "react";
 import MuiAlert from '@mui/material/Alert';
 

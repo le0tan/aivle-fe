@@ -2,8 +2,6 @@ import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
-import Link from "@mui/material/Link";
 import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import axios from "axios";
@@ -51,6 +49,10 @@ const SigninForm = (props) => {
     ).then(resp => {
       sessionStorage.setItem("token", resp.data["key"]);
       sessionStorage.setItem("user_id", resp.data["user"]);
+      if (Cookie.get("remember") === "true") {
+        localStorage.setItem("token", resp.data["key"]);
+        localStorage.setItem("user_id", resp.data["user"]);
+      }
       dispatch(login());
       props.setSnackBarType(SigninSnackBarType.Success);
       props.setOpenSnackBar(true);
@@ -79,18 +81,6 @@ const SigninForm = (props) => {
                       disabled={disable}>
           Sign In
         </SubmitButton>
-        <Grid container>
-          <Grid item xs>
-            <Link href="#" variant="body2">
-              Forgot password?
-            </Link>
-          </Grid>
-          <Grid item>
-            <Link href="#" variant="body2">
-              {"Don't have an account? Sign Up"}
-            </Link>
-          </Grid>
-        </Grid>
       </Form>
     </React.Fragment>
   )
