@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   AppBar,
   Box,
@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import {createTheme, ThemeProvider, useTheme} from "@mui/material/styles";
 import {useDispatch, useSelector} from "react-redux";
-import {logout, selectLoggedIn} from "./redux/authSlice";
+import {login, logout, selectLoggedIn} from "./redux/authSlice";
 import {Link as RouterLink, Route, Switch, useHistory} from "react-router-dom";
 import Cookie from "js-cookie";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -29,15 +29,14 @@ import {selectIsDark, setDark, setLight} from "./redux/darkModeSlice";
 import {DeveloperMode, MenuBook} from "@mui/icons-material";
 import Home from "./pages/home";
 import Submissions from "./pages/submissions";
+import {cleanAuthStorage} from "./lib/auth";
 
 const MyApp = () => {
   const isLoggedIn = useSelector(selectLoggedIn);
   const dispatch = useDispatch();
   const history = useHistory();
   const handleLogout = () => {
-    Cookie.remove("loggedIn");
-    sessionStorage.removeItem("user_id");
-    sessionStorage.removeItem("token");
+    cleanAuthStorage();
     dispatch(logout());
     history.push("/signin");
   }
@@ -48,6 +47,16 @@ const MyApp = () => {
     sessionStorage.setItem("mode", event.target.checked ? "dark" : "light");
   };
   const [openDrawer, setOpenDrawer] = useState(false);
+  useEffect(() => {
+    console.log("effect");
+    const token = localStorage.getItem("token");
+    const user_id = localStorage.getItem("user_id");
+    if (Cookie.get("remember") === "true" && token !== null && user_id !== null) {
+      dispatch(login());
+      sessionStorage.setItem("token", token);
+      sessionStorage.setItem("user_id", user_id);
+    }
+  }, [dispatch]);
 
   return (
     <React.Fragment>
