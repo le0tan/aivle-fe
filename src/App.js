@@ -48,7 +48,6 @@ const MyApp = () => {
   };
   const [openDrawer, setOpenDrawer] = useState(false);
   useEffect(() => {
-    console.log("effect");
     const token = localStorage.getItem("token");
     const user_id = localStorage.getItem("user_id");
     if (Cookie.get("remember") === "true" && token !== null && user_id !== null) {

@@ -34,7 +34,6 @@ const SigninForm = (props) => {
   const dispatch = useDispatch();
 
   const onSubmit = data => {
-    console.log(data);
     const bodyForm = new FormData();
     bodyForm.append("username", data.username);
     bodyForm.append("password", data.password);
