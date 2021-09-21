@@ -9,13 +9,13 @@ import {
 } from "@mui/material";
 import React, {useEffect, useState} from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import Cookie from "js-cookie";
 import {logout, selectLoggedIn} from "../redux/authSlice";
 import {useDispatch, useSelector} from "react-redux";
 import axios from "axios";
 import {API_BASE_URL} from "../constants";
 import ReactJson from "react-json-view";
 import {useTheme} from "@mui/material/styles";
+import {cleanAuthStorage} from "../lib/auth";
 
 const Submissions = () => {
   const {id, task_id} = useParams();
@@ -52,7 +52,7 @@ const Submissions = () => {
   }, [id, isLoggedIn, task_id]);
 
   if (!isLoggedIn) {
-    Cookie.remove("loggedIn");
+    cleanAuthStorage();
     dispatch(logout());
     history.push("/signin");
     return null;

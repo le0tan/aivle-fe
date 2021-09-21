@@ -1,15 +1,15 @@
 import React, {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {logout, selectLoggedIn} from "../../redux/authSlice";
+import {logout, selectLoggedIn} from "../redux/authSlice";
 import {Box, Button, Container, CssBaseline, Paper, Snackbar, styled, TextField, Typography} from "@mui/material";
-import {Alert, SignInPaper} from "../signin";
+import {Alert, SignInPaper} from "./signin";
 import {useForm} from "react-hook-form";
 import axios from "axios";
-import {API_BASE_URL} from "../../constants";
-import Cookie from "js-cookie";
+import {API_BASE_URL} from "../constants";
 import {useHistory} from "react-router-dom";
 import ReactJson from 'react-json-view'
 import {useTheme} from "@mui/material/styles";
+import {cleanAuthStorage} from "../lib/auth";
 
 const Form = styled('form')(({theme}) => ({
     width: '100%', // Fix IE 11 issue.
@@ -43,7 +43,7 @@ const ApiTest = () => {
     });
   }
   if (!isLoggedIn) {
-    Cookie.remove("loggedIn");
+    cleanAuthStorage();
     dispatch(logout());
     history.push("/signin");
     return null;

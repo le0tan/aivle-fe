@@ -3,10 +3,10 @@ import {CircularProgress, Container, CssBaseline, Grid} from "@mui/material";
 import {CourseCard} from "../components/courseCard";
 import {useDispatch, useSelector} from "react-redux";
 import {logout, selectLoggedIn} from "../redux/authSlice";
-import Cookie from "js-cookie";
 import {useHistory} from "react-router-dom";
 import axios from "axios";
 import {API_BASE_URL} from "../constants";
+import {cleanAuthStorage} from "../lib/auth";
 
 
 const CoursePage = () => {
@@ -35,12 +35,10 @@ const CoursePage = () => {
   }, [isLoggedIn]);
 
   if (!isLoggedIn) {
-    Cookie.remove("loggedIn");
+    cleanAuthStorage();
     dispatch(logout());
     history.push("/signin");
-    return (
-      <></>
-    )
+    return null;
   }
 
   return (
