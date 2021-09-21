@@ -46,7 +46,7 @@ const Submissions = () => {
     }).catch(e => {
       console.log(e);
     });
-  }, [id, isLoggedIn]);
+  }, [id, isLoggedIn, task_id]);
 
   if (!isLoggedIn) {
     Cookie.remove("loggedIn");
