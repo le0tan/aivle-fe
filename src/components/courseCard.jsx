@@ -7,7 +7,7 @@ export const CourseCard = ({id, name, semester, participating}) => {
   return (
     <Card>
       <CardActionArea disabled={!participating} onClick={() => {
-        history.push(`/courses/${id}/`);
+        history.push(`/courses/${id}`);
       }}>
         <CardContent>
           <Typography variant="h5" color="text.primary">{name}</Typography>

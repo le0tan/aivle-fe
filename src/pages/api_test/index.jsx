@@ -43,7 +43,7 @@ const ApiTest = () => {
     });
   }
   if (!isLoggedIn) {
-    Cookie.remove("token");
+    Cookie.remove("loggedIn");
     dispatch(logout());
     history.push("/signin");
     return null;

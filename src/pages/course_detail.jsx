@@ -148,10 +148,7 @@ const CourseDetail = () => {
           loading ? <CircularProgress/> : tasks.map(((task, index) => {
             return (
               <Accordion key={`task_${index}`}>
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon/>}
-                  aria-controls="panel1a-content"
-                >
+                <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
                   <Stack direction={"column"} spacing={1} sx={{width: "auto", display: "block"}}>
                     <Typography variant={"h5"}>{task.name}</Typography>
                     <Typography>Deadline: {task.deadlineAt.toLocaleString()}</Typography>
@@ -168,14 +165,17 @@ const CourseDetail = () => {
                   }}>Details</Button>
                   {
                     task.hasTemplate ?
-                      <Button href={`${API_BASE_URL}/api/v1/tasks/${task.id}/download_template/`}>Download
-                        Template</Button> : null
+                      <Button href={`${API_BASE_URL}/api/v1/tasks/${task.id}/download_template/`}>Template</Button>
+                      : null
                   }
                   <div style={{flexGrow: 1}}/>
                   <Button onClick={() => {
                     setactiveTaskIndex(index);
                     setOpenTaskSubmit(true);
                   }}>Submit</Button>
+                  <Button onClick={() => history.push(`/courses/${id}/${task.id}`)}>
+                    Submissions
+                  </Button>
                 </AccordionActions>
               </Accordion>
             )

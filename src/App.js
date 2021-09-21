@@ -28,13 +28,16 @@ import MuiBreadcrumbs from "./components/breadcrumbs";
 import {selectIsDark, setDark, setLight} from "./redux/darkModeSlice";
 import {DeveloperMode, MenuBook} from "@mui/icons-material";
 import Home from "./pages/home";
+import Submissions from "./pages/submissions";
 
 const MyApp = () => {
   const isLoggedIn = useSelector(selectLoggedIn);
   const dispatch = useDispatch();
   const history = useHistory();
   const handleLogout = () => {
-    Cookie.remove("token");
+    Cookie.remove("loggedIn");
+    sessionStorage.removeItem("user_id");
+    sessionStorage.removeItem("token");
     dispatch(logout());
     history.push("/signin");
   }
@@ -85,19 +88,22 @@ const MyApp = () => {
         </Box>
       </Drawer>
       <Switch>
-        <Route path="/signin">
+        <Route exact path="/signin/">
           <SignIn/>
         </Route>
-        <Route path="/api_test">
+        <Route exact path="/api_test/">
           <ApiTest/>
         </Route>
-        <Route path="/courses/:id">
+        <Route exact path="/courses/:id/:task_id">
+          <Submissions/>
+        </Route>
+        <Route exact path="/courses/:id">
           <CourseDetail/>
         </Route>
-        <Route path="/courses">
+        <Route exact path="/courses/">
           <CoursePage/>
         </Route>
-        <Route path="/">
+        <Route exact path="/">
           <Home/>
         </Route>
       </Switch>

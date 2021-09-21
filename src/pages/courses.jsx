@@ -35,7 +35,7 @@ const CoursePage = () => {
   }, [isLoggedIn]);
 
   if (!isLoggedIn) {
-    Cookie.remove("token");
+    Cookie.remove("loggedIn");
     dispatch(logout());
     history.push("/signin");
     return (

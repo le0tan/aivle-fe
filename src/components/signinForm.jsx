@@ -49,8 +49,8 @@ const SigninForm = (props) => {
         headers: {"Content-Type": "multipart/form-data"}
       }
     ).then(resp => {
-      sessionStorage.setItem("token", resp.data["key"])
-      Cookie.set("loggedIn", "true");
+      sessionStorage.setItem("token", resp.data["key"]);
+      sessionStorage.setItem("user_id", resp.data["user"]);
       dispatch(login());
       props.setSnackBarType(SigninSnackBarType.Success);
       props.setOpenSnackBar(true);
