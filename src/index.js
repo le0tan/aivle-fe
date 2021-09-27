@@ -4,15 +4,15 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import {Provider} from "react-redux";
 import store from "./redux/store";
-import {HashRouter} from "react-router-dom";
+import {BrowserRouter} from "react-router-dom";
 import ToggleColorMode from "./App";
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <HashRouter>
+      <BrowserRouter>
         <ToggleColorMode/>
-      </HashRouter>
+      </BrowserRouter>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')

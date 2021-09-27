@@ -30,6 +30,7 @@ import {DeveloperMode, MenuBook} from "@mui/icons-material";
 import Home from "./pages/home";
 import Submissions from "./pages/submissions";
 import {cleanAuthStorage} from "./lib/auth";
+import VerifyEmail from "./pages/verifyEmail";
 
 const MyApp = () => {
   const isLoggedIn = useSelector(selectLoggedIn);
@@ -110,6 +111,9 @@ const MyApp = () => {
         </Route>
         <Route exact path="/courses/">
           <CoursePage/>
+        </Route>
+        <Route path="/account/verify_email/">
+          <VerifyEmail/>
         </Route>
         <Route exact path="/">
           <Home/>
