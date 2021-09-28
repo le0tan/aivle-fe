@@ -95,11 +95,11 @@ const SigninForm = (props) => {
           Sign In
         </SubmitButton>
         <Grid container>
-          {/*<Grid item xs>*/}
-          {/*  <Link href="#" variant="body2" aria-disabled={false}>*/}
-          {/*    Forgot password?*/}
-          {/*  </Link>*/}
-          {/*</Grid>*/}
+          <Grid item xs>
+            <Link component={RouterLink} to="/reset_password" variant="body2" underline={"none"}>
+              Forgot password?
+            </Link>
+          </Grid>
           <Grid item>
             <Link component={RouterLink} to="/signup" variant="body2" underline={"none"}>
               {"Don't have an account? Sign Up"}
