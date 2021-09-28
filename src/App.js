@@ -3,6 +3,7 @@ import {
   AppBar,
   Box,
   Button,
+  Divider,
   Drawer,
   IconButton,
   Link,
@@ -26,7 +27,7 @@ import CoursePage from "./pages/courses";
 import CourseDetail from "./pages/course_detail";
 import MuiBreadcrumbs from "./components/breadcrumbs";
 import {selectIsDark, setDark, setLight} from "./redux/darkModeSlice";
-import {DeveloperMode, MenuBook} from "@mui/icons-material";
+import {AccountBox, DeveloperMode, MenuBook} from "@mui/icons-material";
 import Home from "./pages/home";
 import Submissions from "./pages/submissions";
 import {cleanAuthStorage} from "./lib/auth";
@@ -92,9 +93,13 @@ const MyApp = () => {
               <ListItemText primary={"API Test Tool"}/>
             </ListItemButton>
           </List>
-          {/*<Divider/>*/}
-          {/*<List>*/}
-          {/*</List>*/}
+          <Divider/>
+          <List>
+            <ListItemButton key={"signup"} component={RouterLink} to="/signup">
+              <ListItemIcon><AccountBox/></ListItemIcon>
+              <ListItemText primary={"Sign Up"}/>
+            </ListItemButton>
+          </List>
         </Box>
       </Drawer>
       <Switch>
