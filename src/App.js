@@ -33,6 +33,8 @@ import Submissions from "./pages/submissions";
 import {cleanAuthStorage} from "./lib/auth";
 import VerifyEmail from "./pages/verifyEmail";
 import Signup from "./pages/signup";
+import ResetPassword from "./pages/resetPassword";
+import ResetPasswordConfirm from "./pages/resetPasswordConfirm";
 
 const MyApp = () => {
   const isLoggedIn = useSelector(selectLoggedIn);
@@ -109,6 +111,9 @@ const MyApp = () => {
         <Route exact path="/signup/">
           <Signup/>
         </Route>
+        <Route exact path="/reset_password/">
+          <ResetPassword/>
+        </Route>
         <Route exact path="/api_test/">
           <ApiTest/>
         </Route>
@@ -123,6 +128,9 @@ const MyApp = () => {
         </Route>
         <Route path="/account/verify_email/">
           <VerifyEmail/>
+        </Route>
+        <Route path="/account/reset_password_confirm/">
+          <ResetPasswordConfirm/>
         </Route>
         <Route exact path="/">
           <Home/>

@@ -25,6 +25,10 @@ function matchSpecial(pathname) {
     return "Verify Email";
   } else if (matchPath(pathname, {path: "/signup/"})) {
     return "Sign Up";
+  } else if (matchPath(pathname, {path: "/reset_password/"})) {
+    return "Reset Password";
+  } else if (matchPath(pathname, {path: "/account/reset_password_confirm/"})) {
+    return "Confirm Reset Password";
   } else {
     return null;
   }
