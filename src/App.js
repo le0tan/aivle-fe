@@ -31,6 +31,7 @@ import Home from "./pages/home";
 import Submissions from "./pages/submissions";
 import {cleanAuthStorage} from "./lib/auth";
 import VerifyEmail from "./pages/verifyEmail";
+import Signup from "./pages/signup";
 
 const MyApp = () => {
   const isLoggedIn = useSelector(selectLoggedIn);
@@ -99,6 +100,9 @@ const MyApp = () => {
       <Switch>
         <Route exact path="/signin/">
           <SignIn/>
+        </Route>
+        <Route exact path="/signup/">
+          <Signup/>
         </Route>
         <Route exact path="/api_test/">
           <ApiTest/>
