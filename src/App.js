@@ -3,6 +3,7 @@ import {
   AppBar,
   Box,
   Button,
+  Divider,
   Drawer,
   IconButton,
   Link,
@@ -26,10 +27,12 @@ import CoursePage from "./pages/courses";
 import CourseDetail from "./pages/course_detail";
 import MuiBreadcrumbs from "./components/breadcrumbs";
 import {selectIsDark, setDark, setLight} from "./redux/darkModeSlice";
-import {DeveloperMode, MenuBook} from "@mui/icons-material";
+import {AccountBox, DeveloperMode, MenuBook} from "@mui/icons-material";
 import Home from "./pages/home";
 import Submissions from "./pages/submissions";
 import {cleanAuthStorage} from "./lib/auth";
+import VerifyEmail from "./pages/verifyEmail";
+import Signup from "./pages/signup";
 
 const MyApp = () => {
   const isLoggedIn = useSelector(selectLoggedIn);
@@ -48,7 +51,6 @@ const MyApp = () => {
   };
   const [openDrawer, setOpenDrawer] = useState(false);
   useEffect(() => {
-    console.log("effect");
     const token = localStorage.getItem("token");
     const user_id = localStorage.getItem("user_id");
     if (Cookie.get("remember") === "true" && token !== null && user_id !== null) {
@@ -91,14 +93,21 @@ const MyApp = () => {
               <ListItemText primary={"API Test Tool"}/>
             </ListItemButton>
           </List>
-          {/*<Divider/>*/}
-          {/*<List>*/}
-          {/*</List>*/}
+          <Divider/>
+          <List>
+            <ListItemButton key={"signup"} component={RouterLink} to="/signup">
+              <ListItemIcon><AccountBox/></ListItemIcon>
+              <ListItemText primary={"Sign Up"}/>
+            </ListItemButton>
+          </List>
         </Box>
       </Drawer>
       <Switch>
         <Route exact path="/signin/">
           <SignIn/>
+        </Route>
+        <Route exact path="/signup/">
+          <Signup/>
         </Route>
         <Route exact path="/api_test/">
           <ApiTest/>
@@ -111,6 +120,9 @@ const MyApp = () => {
         </Route>
         <Route exact path="/courses/">
           <CoursePage/>
+        </Route>
+        <Route path="/account/verify_email/">
+          <VerifyEmail/>
         </Route>
         <Route exact path="/">
           <Home/>
