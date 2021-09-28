@@ -49,6 +49,9 @@ export const CourseCard = ({id, name, semester, participating}) => {
       }
     ).then(resp => {
       if (resp.status === 201) {
+        setOpenSnackbar(true);
+        setSnackbarType("success");
+        setSnackbarText("Successfully joined the course. Reloading...")
         window.location.reload();
       }
     }).catch(e => {
@@ -60,8 +63,6 @@ export const CourseCard = ({id, name, semester, participating}) => {
         setSnackbarText(JSON.stringify(e));
       }
       setOpenSnackbar(true);
-    }).finally(() => {
-      setOpenJoin(false);
     });
   };
 
