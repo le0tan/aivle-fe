@@ -9,7 +9,6 @@ import {Alert} from "../components/alert";
 
 export const SigninSnackBarType = {
   Success: "success",
-  WrongCredentials: "wrong_credentials",
 }
 
 const SignIn = () => {
@@ -47,7 +46,7 @@ const SignIn = () => {
                sx={{width: '100%'}}>
           {snackBarType === SigninSnackBarType.Success
             ? "Successfully logged in!"
-            : "Wrong credentials"}
+            : snackBarType}
         </Alert>
       </Snackbar>
     </Container>

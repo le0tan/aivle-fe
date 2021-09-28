@@ -23,6 +23,8 @@ function getBreadcrumbName(pathname) {
 function matchSpecial(pathname) {
   if (matchPath(pathname, {path: "/account/verify_email/"})) {
     return "Verify Email";
+  } else if (matchPath(pathname, {path: "/signup/"})) {
+    return "Sign Up";
   } else {
     return null;
   }

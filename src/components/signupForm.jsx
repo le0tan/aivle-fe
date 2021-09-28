@@ -60,7 +60,7 @@ const SignupForm = (props) => {
         } else if (data.username) {
           props.setSnackBarType(SignUpSnackbarType.ExistingUsername);
         } else {
-          props.setSnackBarType(data);
+          props.setSnackBarType(JSON.stringify(data));
         }
         props.setOpenSnackBar(true);
       }
