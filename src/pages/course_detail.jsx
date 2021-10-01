@@ -19,7 +19,6 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
-  Input,
   InputLabel,
   Stack,
   styled,
@@ -213,7 +212,7 @@ const CourseDetail = () => {
           <DialogContent>
             <Form onSubmit={handleSubmit(onSubmitForm)}>
               <InputLabel>Agent File</InputLabel>
-              <Input {...register("file", {required: true})} type="file" name="file" required/>
+              <input {...register("file", {required: true})} type="file" name="file" accept="application/zip" required/>
               <TextField variant="outlined" margin="normal" fullWidth multiline {...register("description")}
                          id="description" label="Description (optional)"/>
               <input {...register("task", {required: true})} type="text" name="task"
