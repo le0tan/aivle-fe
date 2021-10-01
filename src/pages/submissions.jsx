@@ -1,6 +1,7 @@
 import {useHistory, useParams} from "react-router-dom";
 import {
   Accordion,
+  AccordionActions,
   AccordionDetails,
   AccordionSummary,
   CircularProgress,
@@ -18,6 +19,25 @@ import {API_BASE_URL} from "../constants";
 import ReactJson from "react-json-view";
 import {useTheme} from "@mui/material/styles";
 import {cleanAuthStorage} from "../lib/auth";
+import {CheckCircle} from "@mui/icons-material";
+import Button from "@mui/material/Button";
+
+const markForGrading = (sid) => {
+  axios(
+    {
+      method: "get",
+      url: API_BASE_URL + `/api/v1/submissions/${sid}/mark_for_grading/`,
+      headers: {
+        "Authorization": "Token " + sessionStorage.getItem("token")
+      },
+    }
+  ).then(resp => {
+    // console.log(resp);
+    window.location.reload();
+  }).catch(e => {
+    console.log(e);
+  });
+};
 
 const Submissions = () => {
   const {id, task_id} = useParams();
@@ -45,7 +65,6 @@ const Submissions = () => {
         }
       }
     ).then(resp => {
-      console.log(resp.data);
       setSubmissions(resp.data["results"]);
       setLoading(false);
     }).catch(e => {
@@ -70,8 +89,13 @@ const Submissions = () => {
               return <Accordion key={`submission_${index}`}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
                   <Stack>
-                    <Typography variant={"h6"}>Attempt
-                      at {new Date(submission["created_at"]).toLocaleString()}</Typography>
+                    <Stack direction={"row"}>
+                      <Typography variant={"h6"}>
+                        Attempt at {new Date(submission["created_at"]).toLocaleString()}
+                      </Typography>
+                      {submission["marked_for_grading"] ?
+                        <CheckCircle sx={{color: "success.light", marginLeft: 0.5}}/> : null}
+                    </Stack>
                     {
                       submission["point"] ? <div>
                         <Typography variant={"button"}>Score: </Typography>
@@ -81,8 +105,14 @@ const Submissions = () => {
                   </Stack>
                 </AccordionSummary>
                 <AccordionDetails>
-                  <ReactJson src={submission} theme={theme.palette.mode === "light" ? "rjv-default" : "solarized"}/>
+                  <ReactJson src={submission} theme={theme.palette.mode === "light" ? "rjv-default" : "solarized"}
+                             collapsed={true}/>
                 </AccordionDetails>
+                <AccordionActions sx={{justifyContent: "left"}}>
+                  <Button onClick={() => markForGrading(submission["id"])}>
+                    Mark For Grading
+                  </Button>
+                </AccordionActions>
               </Accordion>
             })
         }
