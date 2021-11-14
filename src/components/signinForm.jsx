@@ -50,9 +50,11 @@ const SigninForm = (props) => {
     ).then(resp => {
       sessionStorage.setItem("token", resp.data["key"]);
       sessionStorage.setItem("user_id", resp.data["user"]);
+      sessionStorage.setItem("username", data.username);
       if (Cookie.get("remember") === "true") {
         localStorage.setItem("token", resp.data["key"]);
         localStorage.setItem("user_id", resp.data["user"]);
+        localStorage.setItem("username", data.username);
       }
       dispatch(login(data.username));
       props.setSnackBarType(SigninSnackBarType.Success);
@@ -72,6 +74,8 @@ const SigninForm = (props) => {
         }
       }
       props.setOpenSnackBar(true);
+      sessionStorage.clear();
+      localStorage.clear();
     }).finally(() => {
       setDisable(false);
     })

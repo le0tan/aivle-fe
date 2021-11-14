@@ -4,7 +4,9 @@ export const authSlice = createSlice({
   name: "auth",
   initialState: {
     loggedIn: sessionStorage.getItem("token") !== null,
-    username: "not_logged_in"
+    username: sessionStorage.getItem("username") === null
+      ? "not_logged_in"
+      : sessionStorage.getItem("username")
   },
   reducers: {
     login: (state, username) => {
