@@ -54,7 +54,7 @@ const SigninForm = (props) => {
         localStorage.setItem("token", resp.data["key"]);
         localStorage.setItem("user_id", resp.data["user"]);
       }
-      dispatch(login());
+      dispatch(login(data.username));
       props.setSnackBarType(SigninSnackBarType.Success);
       props.setOpenSnackBar(true);
     }).catch(e => {

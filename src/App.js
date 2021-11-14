@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import {createTheme, ThemeProvider, useTheme} from "@mui/material/styles";
 import {useDispatch, useSelector} from "react-redux";
-import {login, logout, selectLoggedIn} from "./redux/authSlice";
+import {login, logout, selectLoggedIn, selectUsername} from "./redux/authSlice";
 import {Link as RouterLink, Route, Switch, useHistory} from "react-router-dom";
 import Cookie from "js-cookie";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -38,6 +38,7 @@ import ResetPasswordConfirm from "./pages/resetPasswordConfirm";
 
 const MyApp = () => {
   const isLoggedIn = useSelector(selectLoggedIn);
+  const loggedInUsername = useSelector(selectUsername);
   const dispatch = useDispatch();
   const history = useHistory();
   const handleLogout = () => {
@@ -76,7 +77,7 @@ const MyApp = () => {
           {
             !isLoggedIn
               ? <Button color="inherit" component={RouterLink} to="/signin">Login</Button>
-              : <Button color="inherit" onClick={handleLogout}>Logout</Button>
+              : <Button color="inherit" onClick={handleLogout}>{loggedInUsername}</Button>
           }
           <DarkModeSwitch checked={theme.palette.mode === "dark"} onChange={onSwitchChange}/>
         </Toolbar>
