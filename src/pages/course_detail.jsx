@@ -20,6 +20,7 @@ import {
   DialogTitle,
   Divider,
   InputLabel,
+  Snackbar,
   Stack,
   styled,
   Table,
@@ -31,6 +32,7 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {useForm} from "react-hook-form";
+import {Alert} from "../components/alert";
 
 class Task {
   id;
@@ -74,6 +76,21 @@ const Form = styled('form')(({theme}) => ({
   })
 );
 
+export const SubmitTaskSnackbarType = {
+  Success: "success",
+  DailyLimitExceeded: "daily_limit_exceeded",
+}
+
+const getSnackbarText = (snackbarType) => {
+  switch (snackbarType) {
+    case SubmitTaskSnackbarType.Success:
+      return "Success!";
+    case SubmitTaskSnackbarType.DailyLimitExceeded:
+      return "You have exceeded your daily submission limit.";
+    default:
+      return snackbarType;
+  }
+}
 
 const CourseDetail = () => {
   const {id} = useParams();
@@ -85,6 +102,14 @@ const CourseDetail = () => {
   const [openTaskSubmit, setOpenTaskSubmit] = useState(false);
   const [activeTaskIndex, setactiveTaskIndex] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [openSnackBar, setOpenSnackBar] = React.useState(false);
+  const [snackBarType, setSnackBarType] = React.useState(SubmitTaskSnackbarType.Success);
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnackBar(false);
+  };
   const {register, handleSubmit, reset} = useForm();
   const onCloseSubmitDialog = () => {
     setOpenTaskSubmit(false);
@@ -106,9 +131,24 @@ const CourseDetail = () => {
         }
       }
     ).then(resp => {
-      console.log(resp.data);
+      if (resp.status === 201) {
+        setSnackBarType(SubmitTaskSnackbarType.Success);
+        setOpenSnackBar(true);
+      } else {
+        setSnackBarType(resp.data);
+        setOpenSnackBar(true);
+      }
     }).catch(e => {
-      console.log(e);
+      if (e.response) {
+        const detail = e.response.data.detail;
+        if (detail === "You have exceeded your daily submission limit.") {
+          setSnackBarType(SubmitTaskSnackbarType.DailyLimitExceeded);
+        } else {
+          setSnackBarType("Unknown error. Please see console output.");
+          console.log(JSON.stringify(e.response));
+        }
+        setOpenSnackBar(true);
+      }
     }).finally(() => {
       onCloseSubmitDialog();
     });
@@ -181,6 +221,13 @@ const CourseDetail = () => {
           }))
         }
       </Container>
+      <Snackbar open={openSnackBar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+        <Alert onClose={handleCloseSnackbar}
+               severity={snackBarType === SubmitTaskSnackbarType.Success ? "success" : "error"}
+               sx={{width: '100%'}}>
+          {getSnackbarText(snackBarType)}
+        </Alert>
+      </Snackbar>
       {
         openTaskDetail ?
           <Dialog open={openTaskDetail} onClose={() => setOpenTaskDetail(false)} maxWidth="md" fullWidth>

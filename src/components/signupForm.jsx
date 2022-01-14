@@ -60,7 +60,9 @@ const SignupForm = (props) => {
         } else if (data.username) {
           props.setSnackBarType(SignUpSnackbarType.ExistingUsername);
         } else {
-          props.setSnackBarType(JSON.stringify(data));
+          props.setSnackBarType("Unknown error. Please see console output.");
+          console.log(data);
+          console.log(e.response);
         }
         props.setOpenSnackBar(true);
       }
