@@ -45,6 +45,7 @@ class Task {
   closedAt;
   deadlineAt;
   hasTemplate;
+  maxUploadSize;
 
   constructor(json) {
     this.id = json["id"];
@@ -57,6 +58,7 @@ class Task {
     this.closedAt = new Date(json["closed_at"]);
     this.deadlineAt = new Date(json["deadline_at"]);
     this.hasTemplate = json["template"] !== null;
+    this.maxUploadSize = json["max_upload_size"];
   }
 
   getPropertiesAsString() {
@@ -65,7 +67,8 @@ class Task {
       ["Closed At", this.closedAt.toString()],
       ["Deadline At", this.deadlineAt.toString()],
       ["Daily Submission Limit", this.dailySubmissionLimit.toString()],
-      ["Time Limit", this.runtimeLimit.toString()]
+      ["Max Upload Size (KiB)", this.maxUploadSize.toString()],
+      ["Time Limit (s)", this.runtimeLimit.toString()]
     ]
   }
 }
@@ -79,6 +82,7 @@ const Form = styled('form')(({theme}) => ({
 export const SubmitTaskSnackbarType = {
   Success: "success",
   DailyLimitExceeded: "daily_limit_exceeded",
+  MaxUploadSizeExceeded: "max_upload_size_exceeded",
 }
 
 const getSnackbarText = (snackbarType) => {
@@ -87,6 +91,8 @@ const getSnackbarText = (snackbarType) => {
       return "Success!";
     case SubmitTaskSnackbarType.DailyLimitExceeded:
       return "You have exceeded your daily submission limit.";
+    case SubmitTaskSnackbarType.MaxUploadSizeExceeded:
+      return "Your submission is too large."
     default:
       return snackbarType;
   }
@@ -97,10 +103,10 @@ const CourseDetail = () => {
   const isLoggedIn = useSelector(selectLoggedIn);
   const dispatch = useDispatch();
   const history = useHistory();
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = /** @type [Task[], any] */ useState([]);
   const [openTaskDetail, setOpenTaskDetail] = useState(false);
   const [openTaskSubmit, setOpenTaskSubmit] = useState(false);
-  const [activeTaskIndex, setactiveTaskIndex] = useState(0);
+  const [activeTaskIndex, setActiveTaskIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [openSnackBar, setOpenSnackBar] = React.useState(false);
   const [snackBarType, setSnackBarType] = React.useState(SubmitTaskSnackbarType.Success);
@@ -117,8 +123,17 @@ const CourseDetail = () => {
   }
   const onSubmitForm = (data) => {
     const bodyForm = new FormData();
-    bodyForm.append("task", data["task"]);
-    bodyForm.append("file", data["file"][0]);
+    const uploadFile = /** @type File */ data["file"][0];
+    const taskId = data["task"];
+    const maxUploadSize = tasks.filter(task => task.id === parseInt(taskId))[0].maxUploadSize;
+    if (uploadFile.size > maxUploadSize * 1024) { // File.size is in bytes, max_upload_size is in KiB
+      setSnackBarType(SubmitTaskSnackbarType.MaxUploadSizeExceeded);
+      setOpenSnackBar(true);
+      onCloseSubmitDialog();
+      return;
+    }
+    bodyForm.append("task", taskId);
+    bodyForm.append("file", uploadFile);
     bodyForm.append("description", data["description"]);
     axios(
       {
@@ -164,7 +179,7 @@ const CourseDetail = () => {
         }, params: {course: id}
       }
     ).then(resp => {
-      const tasks = resp.data["results"].map((value) => new Task(value));
+      const tasks = /** @type {Task[]} */ resp.data["results"].map((value) => new Task(value));
       setTasks(tasks);
       setLoading(false);
     }).catch(e => {
@@ -199,7 +214,7 @@ const CourseDetail = () => {
                 <Divider/>
                 <AccordionActions>
                   <Button onClick={() => {
-                    setactiveTaskIndex(index);
+                    setActiveTaskIndex(index);
                     setOpenTaskDetail(true);
                   }}>Details</Button>
                   {
@@ -209,7 +224,7 @@ const CourseDetail = () => {
                   }
                   <div style={{flexGrow: 1}}/>
                   <Button onClick={() => {
-                    setactiveTaskIndex(index);
+                    setActiveTaskIndex(index);
                     setOpenTaskSubmit(true);
                   }}>Submit</Button>
                   <Button onClick={() => history.push(`/courses/${id}/${task.id}`)}>
@@ -254,7 +269,7 @@ const CourseDetail = () => {
       {
         openTaskSubmit ? <Dialog open={openTaskSubmit} maxWidth="md" fullWidth>
           <DialogTitle>
-            New submission to: {tasks[activeTaskIndex]["name"]}
+            New submission to: {tasks[activeTaskIndex].name}
           </DialogTitle>
           <DialogContent>
             <Form onSubmit={handleSubmit(onSubmitForm)}>
@@ -263,7 +278,7 @@ const CourseDetail = () => {
               <TextField variant="outlined" margin="normal" fullWidth multiline {...register("description")}
                          id="description" label="Description (optional)"/>
               <input {...register("task", {required: true})} type="text" name="task"
-                     value={tasks[activeTaskIndex]["id"]} hidden/>
+                     value={tasks[activeTaskIndex].id} hidden/>
               <Button type={"submit"}>Submit</Button>
             </Form>
           </DialogContent>
