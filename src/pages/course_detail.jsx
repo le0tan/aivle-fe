@@ -179,7 +179,7 @@ const CourseDetail = () => {
         }, params: {course: id}
       }
     ).then(resp => {
-      const tasks = /** @type {Task[]} */ resp.data["results"].map((value) => new Task(value));
+      const tasks = /** @type {Task[]} */ resp.data.map((value) => new Task(value));
       setTasks(tasks);
       setLoading(false);
     }).catch(e => {

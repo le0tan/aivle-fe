@@ -31,7 +31,7 @@ const markForGrading = (sid) => {
         "Authorization": "Token " + sessionStorage.getItem("token")
       },
     }
-  ).then(resp => {
+  ).then(() => {
     // console.log(resp);
     window.location.reload();
   }).catch(e => {
@@ -65,7 +65,7 @@ const Submissions = () => {
         }
       }
     ).then(resp => {
-      setSubmissions(resp.data["results"]);
+      setSubmissions(resp.data);
       setLoading(false);
     }).catch(e => {
       console.log(e);
