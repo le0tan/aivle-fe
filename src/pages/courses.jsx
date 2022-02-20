@@ -53,7 +53,8 @@ const CoursePage = () => {
                   return <Grid key={idx} item xs={12} sm={4}>
                     <CourseCard name={course.code} semester={`Semester ${course.semester}`}
                                 id={course.id}
-                                participating={course.participating}/>
+                                participating={course.participation !== null}
+                                role={course.participation === null ? null : course.participation.role}/>
                   </Grid>
                 })
               }

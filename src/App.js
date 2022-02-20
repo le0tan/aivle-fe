@@ -17,7 +17,7 @@ import {
 import {createTheme, ThemeProvider, useTheme} from "@mui/material/styles";
 import {useDispatch, useSelector} from "react-redux";
 import {login, logout, selectLoggedIn, selectUsername} from "./redux/authSlice";
-import {Link as RouterLink, Route, Switch, useHistory} from "react-router-dom";
+import {Link as RouterLink, Route, Switch, useHistory, Redirect} from "react-router-dom";
 import Cookie from "js-cookie";
 import MenuIcon from "@mui/icons-material/Menu";
 import SignIn from "./pages/signin";
@@ -35,6 +35,7 @@ import VerifyEmail from "./pages/verifyEmail";
 import Signup from "./pages/signup";
 import ResetPassword from "./pages/resetPassword";
 import ResetPasswordConfirm from "./pages/resetPasswordConfirm";
+import AdminPanel from "./pages/adminPanel";
 
 const MyApp = () => {
   const isLoggedIn = useSelector(selectLoggedIn);
@@ -117,6 +118,12 @@ const MyApp = () => {
         </Route>
         <Route exact path="/api_test/">
           <ApiTest/>
+        </Route>
+        <Route exact path="/course_admin/:id">
+          <AdminPanel/>
+        </Route>
+        <Route exact path="/course_admin/">
+          <Redirect to="/courses/"/>
         </Route>
         <Route exact path="/courses/:id/:task_id">
           <Submissions/>

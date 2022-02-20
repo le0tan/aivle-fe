@@ -5,7 +5,11 @@ import {matchPath, withRouter} from "react-router-dom";
 import {Typography} from "@mui/material";
 
 function getBreadcrumbName(pathname) {
-  if (matchPath(pathname, {path: "/courses/:id/:task_id", exact: true})) {
+  if (matchPath(pathname, {path: "/course_admin/:id", exact: true})) {
+    return "Admin";
+  } else if (matchPath(pathname, {path: "/course_admin", exact: true})) {
+    return "Courses"; // hack
+  } else if (matchPath(pathname, {path: "/courses/:id/:task_id", exact: true})) {
     return "Submissions";
   } else if (matchPath(pathname, {path: "/courses/:id", exact: true})) {
     return "Tasks";

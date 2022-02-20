@@ -14,15 +14,15 @@ import {
   Typography
 } from "@mui/material";
 import React, {useState} from "react";
-import {useHistory} from "react-router-dom";
+import {Link as RouterLink, useHistory} from "react-router-dom";
 import * as Yup from "yup";
 import {useYupValidationResolver} from "../lib/yupValidationResolver";
 import {useForm} from "react-hook-form";
-import {API_BASE_URL} from "../constants";
+import {API_BASE_URL, ROLE_ADMIN, ROLE_LECTURER} from "../constants";
 import axios from "axios";
 import {Alert} from "./alert";
 
-export const CourseCard = ({id, name, semester, participating}) => {
+export const CourseCard = ({id, name, semester, participating, role}) => {
   const history = useHistory();
   const [openJoin, setOpenJoin] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -80,9 +80,23 @@ export const CourseCard = ({id, name, semester, participating}) => {
         <CardActions>
           {
             participating ?
-              <Button size="small" color="primary" disabled>
-                Leave
-              </Button> :
+              <>
+                {
+                  role === ROLE_ADMIN || role === ROLE_LECTURER ?
+                    <Button size="small" color="primary" component={RouterLink} to={`/course_admin/${id}`}>
+                      Admin
+                    </Button>
+                    : role === ROLE_LECTURER ?
+                      <Button size="small" color="primary">
+                        TA
+                      </Button>
+                      : null
+                }
+                <Button size="small" color="primary" disabled>
+                  Leave
+                </Button>
+              </>
+              :
               <Button size="small" color="primary" onClick={() => setOpenJoin(true)}>
                 Join
               </Button>
