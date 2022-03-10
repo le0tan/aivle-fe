@@ -55,7 +55,6 @@ const Submissions = () => {
   const theme = useTheme();
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeSub, setActiveSub] = useState(-1);
   const [jobStatus, setJobStatus] = useState();
   const [openJobStatus, setOpenJobStatus] = useState(false);
   const [loadingJobStatus, setLoadingJobStatus] = useState(false);
@@ -153,7 +152,6 @@ const Submissions = () => {
                     Mark For Grading
                   </Button>
                   <Button onClick={() => {
-                    setActiveSub(index)
                     loadJobStatus(submission["id"])
                   }} disabled={loadingJobStatus}>
                     Fetch Job Status
