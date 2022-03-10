@@ -7,7 +7,15 @@ import {
   CircularProgress,
   Container,
   CssBaseline,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
   Typography
 } from "@mui/material";
 import React, {useEffect, useState} from "react";
@@ -15,7 +23,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {logout, selectLoggedIn} from "../redux/authSlice";
 import {useDispatch, useSelector} from "react-redux";
 import axios from "axios";
-import {API_BASE_URL} from "../constants";
+import {API_BASE_URL, JobErrorMap, JobStatusMap} from "../constants";
 import ReactJson from "react-json-view";
 import {useTheme} from "@mui/material/styles";
 import {cleanAuthStorage} from "../lib/auth";
@@ -47,6 +55,10 @@ const Submissions = () => {
   const theme = useTheme();
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeSub, setActiveSub] = useState(-1);
+  const [jobStatus, setJobStatus] = useState();
+  const [openJobStatus, setOpenJobStatus] = useState(false);
+  const [loadingJobStatus, setLoadingJobStatus] = useState(false);
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -77,6 +89,34 @@ const Submissions = () => {
     dispatch(logout());
     history.push("/signin");
     return null;
+  }
+
+  const loadJobStatus = (id) => {
+    setLoadingJobStatus(true)
+    axios(
+      {
+        method: "get", url: API_BASE_URL + `/api/v1/jobs/`,
+        params: {
+          submission: id,
+          ordering: "-created_at",
+        },
+        headers: {
+          "Authorization": "Token " + sessionStorage.getItem("token")
+        }
+      }
+    ).then(resp => {
+      const response = resp.data
+      if (response.count === 0) {
+        console.log(`job related to submission ID ${id} is not found`)
+      } else {
+        setJobStatus(response.results[0])
+        setOpenJobStatus(true)
+      }
+    }).catch(e => {
+      console.log(e)
+    }).finally(() => {
+      setLoadingJobStatus(false)
+    })
   }
 
   return (
@@ -112,10 +152,46 @@ const Submissions = () => {
                   <Button onClick={() => markForGrading(submission["id"])}>
                     Mark For Grading
                   </Button>
+                  <Button onClick={() => {
+                    setActiveSub(index)
+                    loadJobStatus(submission["id"])
+                  }} disabled={loadingJobStatus}>
+                    Fetch Job Status
+                  </Button>
                 </AccordionActions>
               </Accordion>
             })
         }
+        <Dialog open={openJobStatus} onClose={() => setOpenJobStatus(false)} maxWidth="md" fullWidth>
+          <DialogTitle>
+            Latest Job Status
+          </DialogTitle>
+          <DialogContent>
+            {
+              jobStatus ? <Table>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>Worker Name</TableCell>
+                    <TableCell>{jobStatus.worker_name}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>Status</TableCell>
+                    <TableCell>{JobStatusMap[jobStatus.status]}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>Error</TableCell>
+                    <TableCell>{jobStatus.error ? JobErrorMap[jobStatus.error] : "None"}</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table> : "Loading"
+            }
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpenJobStatus(false)}>
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Container>
     </>
   )
